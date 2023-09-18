@@ -1,7 +1,5 @@
 import httpStatus from "http-status";
 
-import { AppError } from "@/protocols";
-
 export class ApplicationErrors {
   constructor(
     public status: number = status,
