@@ -1,8 +1,11 @@
 import * as jwt from "jsonwebtoken";
 
 import { appErrors } from "@/errors";
+
 import { AuthRepositories, AuthServices } from "@/protocols";
 import { SignIn, SignUp } from "@/schemas";
+
+import { Sessions, Users } from "@prisma/client";
 
 export function createAuthServices(
   authRepositories: AuthRepositories
@@ -10,6 +13,9 @@ export function createAuthServices(
   return {
     signUp,
     signIn,
+    logout,
+    deleteUser,
+    update,
   };
 
   async function signUp(user: SignUp) {
@@ -20,8 +26,11 @@ export function createAuthServices(
     authRepositories.createUser(user);
   }
 
-  async function signIn({ email, password }: SignIn): Promise<string> {
-    const user = await authRepositories.findUser({
+  async function signIn({ email, password }: SignIn): Promise<{
+    userId: number;
+    token: string;
+  }> {
+    const user: Users = await authRepositories.findUser({
       email: email,
       password: password,
     });
@@ -34,6 +43,31 @@ export function createAuthServices(
 
     authRepositories.createSession(user.id, token);
 
-    return token;
+    return { userId: user.id, token };
   }
+
+  async function logout(token: string) {
+    await authRepositories.endSession(token);
+  }
+
+  async function deleteUser(id: number, token: string) {
+    const user: Users = await authRepositories.findUserById(id);
+    const session: Sessions = await authRepositories.findSession(token);
+
+    if (!user) {
+      throw appErrors.badRequest("User not found");
+    }
+
+    if (!session) {
+      throw appErrors.forbidden("Invalid session");
+    }
+
+    if (user.id !== session.userId) {
+      throw appErrors.forbidden("This token belongs to another user");
+    }
+
+    authRepositories.deleteUser(id);
+  }
+
+  async function update(id: number) {}
 }

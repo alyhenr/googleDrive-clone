@@ -1,21 +1,28 @@
 import httpStatus from "http-status";
 
 export class ApplicationErrors {
-  constructor(
-    public status: number = status,
-    public message: string = message
-  ) {}
+  status: number;
+  message: string;
+  constructor() {}
+
+  setMessage(message: string) {
+    this.message = message;
+    return this;
+  }
+
+  setStatus(status: number) {
+    this.status = status;
+    return this.setMessage.bind(this);
+  }
 }
 
-const createObject = (message: string, status: number): ApplicationErrors =>
-  new ApplicationErrors(status, message);
+const appError = new ApplicationErrors();
 
 export const appErrors = {
-  invalidData: (message: string) =>
-    createObject(message, httpStatus.UNPROCESSABLE_ENTITY),
-  conflict: (message: string) => createObject(message, httpStatus.CONFLICT),
-  badRequest: (message: string) =>
-    createObject(message, httpStatus.BAD_REQUEST),
-  unauthorized: (message: string) =>
-    createObject(message, httpStatus.UNAUTHORIZED),
+  conflict: appError.setStatus(httpStatus.CONFLICT),
+  invalidData: appError.setStatus(httpStatus.UNPROCESSABLE_ENTITY),
+  badRequest: appError.setStatus(httpStatus.BAD_REQUEST),
+  unauthorized: appError.setStatus(httpStatus.UNAUTHORIZED),
+  forbidden: appError.setStatus(httpStatus.FORBIDDEN),
+  notFound: appError.setStatus(httpStatus.NOT_FOUND),
 };

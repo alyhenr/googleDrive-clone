@@ -1,6 +1,6 @@
 import { AuthRepositories } from "@/protocols";
 import { SignIn, SignUp } from "@/schemas";
-import { PrismaClient, Users } from "@prisma/client";
+import { PrismaClient, Sessions, Users } from "@prisma/client";
 
 export function createAuthRepositories(prisma: PrismaClient): AuthRepositories {
   const users = prisma.users;
@@ -9,10 +9,13 @@ export function createAuthRepositories(prisma: PrismaClient): AuthRepositories {
   return {
     createUser,
     findUser,
+    findUserById,
     findUserByEmail,
     createSession,
+    endSession,
     deleteUser,
     updateUser,
+    findSession,
   };
 
   async function createUser(user: SignUp) {
@@ -26,6 +29,14 @@ export function createAuthRepositories(prisma: PrismaClient): AuthRepositories {
       where: {
         email: user.email,
         password: user.password,
+      },
+    });
+  }
+
+  async function findUserById(id: number): Promise<Users> {
+    return await users.findFirst({
+      where: {
+        id,
       },
     });
   }
@@ -47,7 +58,29 @@ export function createAuthRepositories(prisma: PrismaClient): AuthRepositories {
     });
   }
 
-  async function deleteUser(id: number) {}
+  async function findSession(token: string): Promise<Sessions> {
+    return await sessions.findFirst({
+      where: {
+        token,
+      },
+    });
+  }
+
+  async function endSession(token: string) {
+    await sessions.delete({
+      where: {
+        token,
+      },
+    });
+  }
+
+  async function deleteUser(id: number) {
+    await users.delete({
+      where: {
+        id,
+      },
+    });
+  }
 
   async function updateUser(id: number) {}
 }

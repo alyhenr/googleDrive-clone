@@ -3,9 +3,9 @@ import * as jwt from "jsonwebtoken";
 
 import { appErrors } from "@/errors";
 
-export async function verifyToken(
+export function verifyToken(
   findSession: (token: string) => Promise<boolean>
-) {
+): AuthMiddleware {
   return async (
     req: AuthenticatedRequest,
     res: Response,
@@ -23,7 +23,7 @@ export async function verifyToken(
 
     const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
 
-    req.userId = userId;
+    res.locals.userId = userId;
     next();
   };
 }
@@ -32,3 +32,9 @@ export type AuthenticatedRequest = Request & JWTPayload;
 type JWTPayload = {
   userId: number;
 };
+
+export type AuthMiddleware = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;

@@ -7,6 +7,7 @@ import { createAuthRepositories } from "@/repositories";
 import { validate } from "@/middlewares";
 import { signUpSchema, signInSchema } from "@/schemas";
 import { PrismaClient } from "@prisma/client";
+import { authMiddleware } from ".";
 
 const authRouter = Router();
 export function createAuthRouter(prisma: PrismaClient) {
@@ -16,6 +17,8 @@ export function createAuthRouter(prisma: PrismaClient) {
 
   authRouter.post("/sign-up", validate(signUpSchema), authController.signUp);
   authRouter.post("/sign-in", validate(signInSchema), authController.signIn);
+  authRouter.post("/logout", authMiddleware, authController.logout);
+  authRouter.delete("/delete/:id", authMiddleware, authController.deleteUser);
 
   return authRouter;
 }

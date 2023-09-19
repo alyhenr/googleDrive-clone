@@ -22,6 +22,6 @@ model Users {
 model Sessions {
   id Int @id @default(autoincrement())
   token String @unique
-  user Users @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 }
