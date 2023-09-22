@@ -5,7 +5,7 @@ import cors from "cors";
 import { prisma } from "@/config";
 
 import { handleAppErrors } from "@/middlewares";
-import { authRouter, createRouter } from "@/routers";
+import { createRouter, authRouter, filesRouter } from "@/routers";
 import { connectDb, disconnectDB } from "@/config";
 
 const app = express();
@@ -18,6 +18,7 @@ export async function init(): Promise<Express> {
     .use(express.json())
     .get("/health", (_req, res) => res.send("OK!"))
     .use("/auth", authRouter)
+    .use("/files", filesRouter)
     .use(handleAppErrors);
   return Promise.resolve(app);
 }

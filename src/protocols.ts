@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SignIn, SignUp } from "./schemas";
-import { Sessions, Users } from "@prisma/client";
+import { PrismaClient, Sessions, Users } from "@prisma/client";
 
 export type AppError = {
   status: number;
@@ -35,4 +35,23 @@ export type AuthRepositories = {
   endSession: (token: string) => Promise<void>;
   deleteUser: (id: number) => Promise<void>;
   updateUser: (id: number) => Promise<void>;
+};
+
+//Files
+export type FilesController = {
+  create: (req: Request, res: Response) => Promise<void>;
+  read: (req: Request, res: Response) => Promise<void>;
+  deleteFile: (req: Request, res: Response) => Promise<void>;
+};
+export interface FilesServices {
+  userId: number;
+  create: (file: File) => Promise<void>;
+  read: (id: number | null) => Promise<File | File[]>;
+  deleteFile: (id: number) => Promise<void>;
+}
+
+export type FilesRepositories = {
+  create: (file: File) => Promise<void>;
+  read: (id: number | null) => Promise<File | File[]>;
+  deleteFile: (id: number) => Promise<void>;
 };

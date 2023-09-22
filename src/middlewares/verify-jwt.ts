@@ -18,7 +18,7 @@ export function verifyToken(
 
     const token = authHeader.split(" ")[1];
     if (!(await findSession(token))) {
-      appErrors.unauthorized("Invalid token!");
+      throw appErrors.unauthorized("Invalid token!");
     }
 
     const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;

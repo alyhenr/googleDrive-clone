@@ -12,6 +12,7 @@ export class ApplicationErrors {
 
   setStatus(status: number) {
     this.status = status;
+
     return this.setMessage.bind(this);
   }
 }
@@ -19,10 +20,16 @@ export class ApplicationErrors {
 const appError = new ApplicationErrors();
 
 export const appErrors = {
-  conflict: appError.setStatus(httpStatus.CONFLICT),
-  invalidData: appError.setStatus(httpStatus.UNPROCESSABLE_ENTITY),
-  badRequest: appError.setStatus(httpStatus.BAD_REQUEST),
-  unauthorized: appError.setStatus(httpStatus.UNAUTHORIZED),
-  forbidden: appError.setStatus(httpStatus.FORBIDDEN),
-  notFound: appError.setStatus(httpStatus.NOT_FOUND),
+  conflict: (message: string) =>
+    appError.setStatus(httpStatus.CONFLICT)(message),
+  invalidData: (message: string) =>
+    appError.setStatus(httpStatus.UNPROCESSABLE_ENTITY)(message),
+  badRequest: (message: string) =>
+    appError.setStatus(httpStatus.BAD_REQUEST)(message),
+  unauthorized: (message: string) =>
+    appError.setStatus(httpStatus.UNAUTHORIZED)(message),
+  forbidden: (message: string) =>
+    appError.setStatus(httpStatus.FORBIDDEN)(message),
+  notFound: (message: string) =>
+    appError.setStatus(httpStatus.NOT_FOUND)(message),
 };

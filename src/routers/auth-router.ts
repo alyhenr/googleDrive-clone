@@ -19,8 +19,6 @@ export function createAuthRouter(prisma: PrismaClient) {
   authRouter.post("/sign-in", validate(signInSchema), authController.signIn);
   authRouter.post("/logout", authMiddleware, authController.logout);
   authRouter.delete("/delete/:id", authMiddleware, authController.deleteUser);
-
-  return authRouter;
 }
 
 export { authRouter };
